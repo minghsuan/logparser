@@ -1,0 +1,7 @@
+[
+{"enable":1, "repo":"rules", "name":"rule001"},
+{"enable":1, "repo":"rules", "name":"rule002"},
+{"enable":1, "repo":"rules", "name":"rule003"},
+{"enable":1, "repo":"rules", "name":"rule004"},
+{"enable":0, "repo":"rules", "name":""}
+]
