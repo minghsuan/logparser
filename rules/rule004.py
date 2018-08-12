@@ -1,10 +1,10 @@
 
-def RULE_MATCH(log):
+def RULE_MATCH(log_obj):
 	result = False
 	
-	if "userimport" in log["content"]:
+	if "userimport" in log_obj["content"]:
 		result = True
 	return result
 	
-def RULE_ACTION(log):
-	print(log["line"], "\t", log["content"].strip())
+def RULE_ACTION(env_obj, rule_obj, log_obj):
+	print(log_obj["line"], "\t", log_obj["content"].strip())

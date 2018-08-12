@@ -2,8 +2,9 @@ import sys
 import json
 import os
 import importlib
+import pprint
 
-def apply_rules(log, json_obj):
+def apply_rules(g_env, log, json_obj):
 	for item in json_obj:
 		mod_en = item["enable"]
 		mod_name = item["name"]
@@ -11,26 +12,26 @@ def apply_rules(log, json_obj):
 		if(mod_en == 1):
 			mod = importlib.import_module(mod_repo + "." + mod_name)
 			if mod.RULE_MATCH(log):
-				if mod.RULE_ACTION:
-					mod.RULE_ACTION(log)
-				#if mod.RULE_END:
-				#	mod.RULE_END(log)
+				mod.RULE_ACTION(g_env, item, log)
+				#mod.RULE_END(log)
 
 def loadJson2Obj(json_file):
 	data = None
-	with open(json_file) as fd:
+	with open(json_file, encoding='UTF-8') as fd:
 		data = json.load(fd)	
 	return data
 	
-def load_log_with_json(log_file, json_obj):
+def load_log_with_json(g_env, log_file, json_obj):
 	line_index = 1
 	with open(log_file, 'r', encoding='UTF-8') as in_file:
 		for line in in_file:
 			log = {}
 			log["filename"] = log_file
+			log["basename"] = os.path.basename(log_file)
+			log["dirname"] = os.path.abspath(os.path.dirname(log_file))
 			log["line"] = line_index
 			log["content"] = line
-			apply_rules(log, json_obj)
+			apply_rules(g_env, log, json_obj)
 			#if (line_index % 1000) == 0 :
 			#	print(line_index)
 			line_index+=1
@@ -61,7 +62,9 @@ if __name__ == '__main__':
 	if ops == "compare" :
 		json_cfg = sys.argv[3]
 		json_obj = loadJson2Obj(json_cfg)
-		load_log_with_json(log_file_path, json_obj)
+		g_env = {}
+		load_log_with_json(g_env, log_file_path, json_obj)
+		pprint.pprint(g_env)
 	if ops == "line" :
 		start_index = int(sys.argv[3])
 		end_index =  int(sys.argv[4])
